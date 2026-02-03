@@ -1,34 +1,53 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { toast } from 'react-hot-toast';
 import useAuthStore from '../store/authStore';
 import { CheckCircleIcon, XCircleIcon, CreditCardIcon } from '@heroicons/react/24/outline';
 
 const Subscription = () => {
-  const { user, hasActiveSubscription } = useAuthStore();
+  const navigate = useNavigate();
+  const { user, isAuthenticated, hasActiveSubscription } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [subscription, setSubscription] = useState(null);
 
   useEffect(() => {
+    // Redirect to login if not authenticated
+    if (!isAuthenticated) {
+      toast.error('Please login to manage subscriptions');
+      navigate('/login');
+      return;
+    }
     fetchSubscriptionStatus();
-  }, []);
+  }, [isAuthenticated, navigate]);
 
   const fetchSubscriptionStatus = async () => {
     try {
       const response = await api.get('/subscriptions/status');
       setSubscription(response.data.subscription);
     } catch (error) {
-      console.error('Failed to fetch subscription status');
+      console.error('Failed to fetch subscription status:', error);
     }
   };
 
   const handleSubscribe = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please login first');
+      navigate('/login');
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await api.post('/subscriptions/create-checkout');
-      window.location.href = response.data.url;
+      if (response.data.url) {
+        window.location.href = response.data.url;
+      } else {
+        toast.error('Failed to get checkout session');
+      }
     } catch (error) {
-      toast.error('Failed to create checkout session');
+      console.error('Checkout error:', error);
+      toast.error(error.response?.data?.message || 'Failed to create checkout session');
       setLoading(false);
     }
   };
