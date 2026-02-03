@@ -15,6 +15,8 @@ import Scanner from './pages/Scanner';
 import Trades from './pages/Trades';
 import Calculators from './pages/Calculators';
 import Subscription from './pages/Subscription';
+import SubscriptionSuccess from './pages/SubscriptionSuccess';
+import SubscriptionCancelled from './pages/SubscriptionCancelled';
 import Performance from './pages/Performance';
 
 // Admin Pages
@@ -75,6 +77,8 @@ function App() {
           >
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/subscription" element={<Subscription />} />
+            <Route path="/subscription/success" element={<SubscriptionSuccess />} />
+            <Route path="/subscription/cancelled" element={<SubscriptionCancelled />} />
             
             {/* Routes requiring subscription */}
             <Route
