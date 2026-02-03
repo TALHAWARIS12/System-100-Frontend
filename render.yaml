@@ -1,8 +1,9 @@
 services:
   - type: web
     name: trading-system-frontend
-    staticPublishPath: ./dist
+    runtime: node
     buildCommand: npm install && npm run build
+    startCommand: npm start
     envVars:
       - key: VITE_API_URL
         scope: build
