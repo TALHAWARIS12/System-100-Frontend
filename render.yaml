@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: trading-system-frontend
+    staticPublishPath: ./dist
+    buildCommand: npm install && npm run build
+    envVars:
+      - key: VITE_API_URL
+        scope: build
+        value: https://system-100-backend.onrender.com/api
