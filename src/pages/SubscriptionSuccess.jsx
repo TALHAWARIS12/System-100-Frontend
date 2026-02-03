@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
+import useAuthStore from '../store/authStore';
 import api from '../utils/api';
 
 const SubscriptionSuccess = () => {
   const navigate = useNavigate();
+  const { fetchUser } = useAuthStore();
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [verified, setVerified] = useState(false);
@@ -24,10 +26,12 @@ const SubscriptionSuccess = () => {
         return;
       }
 
-      // Optional: Verify the session with backend
+      // Verify the session with backend
       const response = await api.post('/subscriptions/verify-session', { sessionId });
       
       if (response.data.success) {
+        // Refresh user from backend to get updated subscription status
+        await fetchUser();
         setVerified(true);
         toast.success('Subscription activated successfully!');
       }
@@ -35,6 +39,8 @@ const SubscriptionSuccess = () => {
       console.error('Verification error:', error);
       // Still show success even if verification fails (payment was processed)
       setVerified(true);
+      // Try to refresh user anyway
+      await fetchUser();
     } finally {
       setLoading(false);
     }

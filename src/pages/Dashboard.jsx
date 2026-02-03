@@ -10,11 +10,13 @@ import {
 } from '@heroicons/react/24/outline';
 
 const Dashboard = () => {
-  const { user, hasActiveSubscription } = useAuthStore();
+  const { user, hasActiveSubscription, fetchUser } = useAuthStore();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Refresh user to get latest subscription status
+    fetchUser();
     fetchStats();
   }, []);
 

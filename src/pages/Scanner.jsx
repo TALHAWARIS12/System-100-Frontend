@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import useAuthStore from '../store/authStore';
 import api from '../utils/api';
 import { toast } from 'react-hot-toast';
 import { MagnifyingGlassIcon, ArrowTrendingUpIcon, ArrowTrendingDownIcon, ChartBarIcon } from '@heroicons/react/24/outline';
@@ -6,6 +7,7 @@ import { format } from 'date-fns';
 import TradingViewChart from '../components/TradingViewChart';
 
 const Scanner = () => {
+  const { fetchUser } = useAuthStore();
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSignal, setSelectedSignal] = useState(null);
@@ -15,6 +17,8 @@ const Scanner = () => {
   });
 
   useEffect(() => {
+    // Refresh user to ensure subscription is up to date
+    fetchUser();
     fetchResults();
     
     // Auto-refresh every 60 seconds
