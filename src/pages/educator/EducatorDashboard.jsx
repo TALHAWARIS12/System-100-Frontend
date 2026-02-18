@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../utils/api';
-import { ChartBarIcon, SignalIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, SignalIcon, CheckCircleIcon, XCircleIcon, BellAlertIcon } from '@heroicons/react/24/outline';
+import SignalBroadcast from '../../components/SignalBroadcast';
 
 const EducatorDashboard = () => {
   const [stats, setStats] = useState(null);
@@ -144,6 +145,11 @@ const EducatorDashboard = () => {
           <h3 className="text-lg font-bold text-white mb-2">View All Signals</h3>
           <p className="text-gray-400">See all published trade signals from educators</p>
         </a>
+      </div>
+
+      {/* Signal Broadcast Section */}
+      <div className="mt-8">
+        <SignalBroadcast />
       </div>
     </div>
   );

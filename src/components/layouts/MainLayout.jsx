@@ -14,7 +14,8 @@ import {
   Cog6ToothIcon,
   ServerIcon,
   Bars3Icon,
-  XMarkIcon
+  XMarkIcon,
+  GlobeAltIcon
 } from '@heroicons/react/24/outline';
 
 const MainLayout = () => {
@@ -29,6 +30,7 @@ const MainLayout = () => {
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, show: true },
+    { name: 'Market Data', href: '/market-data', icon: GlobeAltIcon, show: hasActiveSubscription() },
     { name: 'Scanner', href: '/scanner', icon: MagnifyingGlassIcon, show: hasActiveSubscription() },
     { name: 'Trades', href: '/trades', icon: SignalIcon, show: hasActiveSubscription() },
     { name: 'Performance', href: '/performance', icon: ChartBarIcon, show: hasActiveSubscription() },

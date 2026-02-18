@@ -6,7 +6,8 @@ import {
   CurrencyDollarIcon,
   SignalIcon,
   UserGroupIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
+  GlobeAltIcon
 } from '@heroicons/react/24/outline';
 
 const Dashboard = () => {
@@ -151,6 +152,21 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {hasAccess && (
             <>
+              <a
+                href="/market-data"
+                className="group relative p-6 bg-gradient-to-br from-blue-900/30 to-blue-800/20 rounded-xl border border-blue-500/30 hover:border-blue-500/60 transition-all overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <GlobeAltIcon className="w-10 h-10 text-blue-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">→</span>
+                  </div>
+                  <h3 className="font-black text-xl text-white mb-2 group-hover:text-blue-300 transition-colors">Market Data</h3>
+                  <p className="text-sm text-gray-400 font-medium">Forex calendar & currency strength</p>
+                </div>
+              </a>
+
               <a
                 href="/scanner"
                 className="group relative p-6 bg-gradient-to-br from-primary-900/30 to-primary-800/20 rounded-xl border border-primary-500/30 hover:border-primary-500/60 transition-all overflow-hidden"

@@ -17,11 +17,12 @@ const subscriptionPlans = [
     monthlyFee: 200.77,
     description: 'Perfect for traders starting their journey',
     features: [
-      'Real-time market scanner signals',
-      'Professional trade signals from educators',
+      'Real-time market scanner trade ideas',
+      'Professional trade ideas from educators',
       'Access to all trading calculators',
       'Live TradingView charts',
-      'Email notifications for new signals',
+      'Email notifications for new trade ideas',
+      '12 week beginners course',
       'Priority support',
       'Cancel anytime'
     ],
@@ -43,8 +44,9 @@ const subscriptionPlans = [
       'No evaluation test required',
       'Direct funded account access',
       'Advanced trading tools',
+      'Additional trade ideas',
       'Personal account manager',
-      'Exclusive trading webinars'
+      'Breakfast club 3 times a week'
     ],
     popular: false,
     badge: 'No Test'
@@ -144,7 +146,7 @@ const Subscription = () => {
           Gold Circle Membership
         </h1>
         <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-          Unlock premium trading tools, signals, and funded account opportunities
+          Unlock premium trading tools, trade ideas, and funded account opportunities
         </p>
       </div>
 
@@ -331,7 +333,7 @@ const Subscription = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
             </div>
-            <h3 className="font-semibold text-white mb-2">Trade Signals</h3>
+            <h3 className="font-semibold text-white mb-2">Trade Ideas</h3>
             <p className="text-sm text-gray-400">
               Expert trade ideas with entry, stop loss, and take profit levels
             </p>

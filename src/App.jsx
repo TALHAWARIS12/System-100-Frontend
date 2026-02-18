@@ -18,6 +18,7 @@ import Subscription from './pages/Subscription';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import SubscriptionCancelled from './pages/SubscriptionCancelled';
 import Performance from './pages/Performance';
+import MarketData from './pages/MarketData';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -110,6 +111,14 @@ function App() {
               element={
                 <ProtectedRoute requireSubscription>
                   <Performance />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/market-data"
+              element={
+                <ProtectedRoute requireSubscription>
+                  <MarketData />
                 </ProtectedRoute>
               }
             />
