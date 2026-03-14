@@ -142,7 +142,7 @@ const Subscription = () => {
         <>
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-white mb-2">Choose Your Gold Circle Plan</h2>
-            <p className="text-gray-400">All plans include full platform access &bull; GBP pricing &bull; Cancel anytime</p>
+            <p className="text-gray-400">All plans include full platform access &bull; USD pricing &bull; Cancel anytime</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
@@ -202,20 +202,20 @@ const Subscription = () => {
                         <>
                           {/* Setup fee */}
                           <div className="flex items-baseline mb-1">
-                            <span className="text-sm text-gray-400 mr-1">&pound;</span>
+                            <span className="text-sm text-gray-400 mr-1">$</span>
                             <span className="text-3xl font-black text-white">{Number(setup).toFixed(2)}</span>
                           </div>
                           <p className="text-xs text-gray-500 mb-3">One-off setup fee</p>
                           {/* Then monthly */}
                           <div className="flex items-baseline border-t border-primary-500/10 pt-3">
-                            <span className="text-sm text-yellow-400 mr-1">then &pound;</span>
+                            <span className="text-sm text-yellow-400 mr-1">then $</span>
                             <span className="text-xl font-bold text-yellow-400">{Number(monthly).toFixed(2)}</span>
                             <span className="text-gray-500 ml-1 text-sm">/month</span>
                           </div>
                         </>
                       ) : (
                         <div className="flex items-baseline">
-                          <span className="text-sm text-gray-400 mr-1">&pound;</span>
+                          <span className="text-sm text-gray-400 mr-1">$</span>
                           <span className="text-4xl font-black text-yellow-400">{Number(monthly).toFixed(2)}</span>
                           <span className="text-gray-500 ml-1">/month</span>
                         </div>
@@ -280,8 +280,8 @@ const Subscription = () => {
               const pm = plan.monthlyPrice ?? plan.price ?? 0;
               const ps = plan.setupFee ?? 0;
               const label = ps > 0
-                ? `Get Started — £${Number(ps).toFixed(2)} + £${Number(pm).toFixed(2)}/mo`
-                : `Subscribe — £${Number(pm).toFixed(2)}/mo`;
+                ? `Get Started — $${Number(ps).toFixed(2)} + $${Number(pm).toFixed(2)}/mo`
+                : `Subscribe — $${Number(pm).toFixed(2)}/mo`;
               return (
                 <button
                   onClick={() => handleSubscribe(selectedPlan)}
@@ -363,14 +363,14 @@ const Subscription = () => {
                   <td className="p-3 text-gray-400 font-bold">Setup Fee</td>
                   {plans.map(p => (
                     <td key={p.planId} className="text-center p-3 font-bold text-gray-300">
-                      {(p.setupFee ?? 0) > 0 ? `£${Number(p.setupFee).toFixed(2)}` : '—'}
+                      {(p.setupFee ?? 0) > 0 ? `$${Number(p.setupFee).toFixed(2)}` : '—'}
                     </td>
                   ))}
                 </tr>
                 <tr>
                   <td className="p-3 text-gray-400 font-bold">Monthly</td>
                   {plans.map(p => (
-                    <td key={p.planId} className="text-center p-3 font-bold text-yellow-400">£{Number(p.monthlyPrice ?? p.price ?? 0).toFixed(2)}/mo</td>
+                    <td key={p.planId} className="text-center p-3 font-bold text-yellow-400">${Number(p.monthlyPrice ?? p.price ?? 0).toFixed(2)}/mo</td>
                   ))}
                 </tr>
               </tbody>
@@ -387,7 +387,7 @@ const Subscription = () => {
         </div>
         <div className="flex items-center text-gray-400 text-sm">
           <svg className="w-5 h-5 mr-2 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
-          GBP Pricing
+          USD Pricing
         </div>
         <div className="flex items-center text-gray-400 text-sm">
           <svg className="w-5 h-5 mr-2 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" /></svg>
