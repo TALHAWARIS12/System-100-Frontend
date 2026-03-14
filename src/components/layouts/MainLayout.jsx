@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import useAuthStore from '../../store/authStore';
+import NotificationBell from '../NotificationBell';
 import {
   HomeIcon,
   MagnifyingGlassIcon,
@@ -15,11 +16,17 @@ import {
   ServerIcon,
   Bars3Icon,
   XMarkIcon,
-  GlobeAltIcon
+  GlobeAltIcon,
+  ChatBubbleLeftRightIcon,
+  BookOpenIcon,
+  CalendarDaysIcon,
+  LinkIcon,
+  BoltIcon
 } from '@heroicons/react/24/outline';
 
 const MainLayout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout, hasActiveSubscription } = useAuthStore();
 
@@ -28,13 +35,22 @@ const MainLayout = () => {
     navigate('/login');
   };
 
+  // Admin and Educator roles always have access to Phase 2 features
+  const isPowerUser = user?.role === 'admin' || user?.role === 'educator';
+  const hasAccess = isPowerUser || hasActiveSubscription();
+
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, show: true },
-    { name: 'Market Data', href: '/market-data', icon: GlobeAltIcon, show: hasActiveSubscription() },
-    { name: 'Scanner', href: '/scanner', icon: MagnifyingGlassIcon, show: hasActiveSubscription() },
-    { name: 'Trades', href: '/trades', icon: SignalIcon, show: hasActiveSubscription() },
-    { name: 'Performance', href: '/performance', icon: ChartBarIcon, show: hasActiveSubscription() },
-    { name: 'Calculators', href: '/calculators', icon: CalculatorIcon, show: hasActiveSubscription() },
+    { name: 'Market Data', href: '/market-data', icon: GlobeAltIcon, show: hasAccess },
+    { name: 'Gold Scanner', href: '/gold-scanner', icon: BoltIcon, show: hasAccess },
+    { name: 'Scanner', href: '/scanner', icon: MagnifyingGlassIcon, show: hasAccess },
+    { name: 'Trades', href: '/trades', icon: SignalIcon, show: hasAccess },
+    { name: 'Journal', href: '/journal', icon: BookOpenIcon, show: hasAccess },
+    { name: 'Calendar', href: '/calendar', icon: CalendarDaysIcon, show: hasAccess },
+    { name: 'Community', href: '/community', icon: ChatBubbleLeftRightIcon, show: hasAccess },
+    { name: 'Performance', href: '/performance', icon: ChartBarIcon, show: hasAccess },
+    { name: 'Calculators', href: '/calculators', icon: CalculatorIcon, show: hasAccess },
+    { name: 'Referrals', href: '/referrals', icon: LinkIcon, show: hasAccess },
     { name: 'Subscription', href: '/subscription', icon: CreditCardIcon, show: user?.role === 'client' }
   ];
 
@@ -61,16 +77,19 @@ const MainLayout = () => {
       {/* Mobile menu button */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 h-16 bg-dark-800/95 backdrop-blur-sm border-b border-primary-500/20">
         <h1 className="text-xl font-black text-primary-400 uppercase tracking-wider glow-text">Trading Platform</h1>
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 text-primary-400 hover:text-primary-300 hover:bg-primary-500/10 rounded-lg transition-all"
-        >
-          {sidebarOpen ? (
-            <XMarkIcon className="w-6 h-6" />
-          ) : (
-            <Bars3Icon className="w-6 h-6" />
-          )}
-        </button>
+        <div className="flex items-center gap-2">
+          <NotificationBell />
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 text-primary-400 hover:text-primary-300 hover:bg-primary-500/10 rounded-lg transition-all"
+          >
+            {sidebarOpen ? (
+              <XMarkIcon className="w-6 h-6" />
+            ) : (
+              <Bars3Icon className="w-6 h-6" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Mobile overlay */}
@@ -90,26 +109,36 @@ const MainLayout = () => {
           <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-primary-500/10 to-transparent pointer-events-none"></div>
           
           {/* Logo */}
-          <div className="hidden lg:flex items-center justify-center h-16 px-4 border-b border-primary-500/20 relative">
+          <div className="hidden lg:flex items-center justify-between h-16 px-4 border-b border-primary-500/20 relative">
             <div className="absolute inset-0 bg-primary-500/5"></div>
             <h1 className="text-xl font-black text-primary-400 uppercase tracking-wider glow-text relative z-10">Trading Platform</h1>
+            <div className="relative z-10">
+              <NotificationBell />
+            </div>
           </div>
 
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto mt-16 lg:mt-0 relative z-10">
             {/* Main Navigation */}
             <div className="space-y-1">
-              {navigation.filter(item => item.show).map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => setSidebarOpen(false)}
-                  className="group flex items-center px-4 py-3 text-sm font-bold text-gray-400 rounded-lg hover:bg-primary-500/10 hover:text-primary-300 transition-all hover:translate-x-1 border border-transparent hover:border-primary-500/30"
-                >
-                  <item.icon className="w-5 h-5 mr-3 group-hover:text-primary-400 transition-colors" />
-                  <span className="uppercase tracking-wide">{item.name}</span>
-                </Link>
-              ))}
+              {navigation.filter(item => item.show).map((item) => {
+                const isActive = location.pathname === item.href;
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setSidebarOpen(false)}
+                    className={`group flex items-center px-4 py-3 text-sm font-bold rounded-lg transition-all hover:translate-x-1 border ${
+                      isActive
+                        ? 'bg-primary-500/10 text-primary-300 border-primary-500/30'
+                        : 'text-gray-400 hover:bg-primary-500/10 hover:text-primary-300 border-transparent hover:border-primary-500/30'
+                    }`}
+                  >
+                    <item.icon className={`w-5 h-5 mr-3 transition-colors ${isActive ? 'text-primary-400' : 'group-hover:text-primary-400'}`} />
+                    <span className="uppercase tracking-wide">{item.name}</span>
+                  </Link>
+                );
+              })}
             </div>
 
             {/* Educator Navigation */}

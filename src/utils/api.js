@@ -43,11 +43,17 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Handle 401 Unauthorized
+    // Handle 401 Unauthorized — only redirect for actual auth failures
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-      toast.error('Session expired. Please login again.');
+      const msg = error.response?.data?.message || '';
+      const isAuthFailure = msg.includes('Not authorized') || msg.includes('token') || msg.includes('Session expired');
+      const isAuthPage = window.location.pathname === '/login' || window.location.pathname === '/register';
+      if (isAuthFailure && !isAuthPage) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('auth-storage');
+        window.location.replace('/login');
+        toast.error('Session expired. Please login again.');
+      }
       return Promise.reject(error);
     }
 

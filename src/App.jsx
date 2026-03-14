@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import useAuthStore from './store/authStore';
@@ -20,6 +20,13 @@ import SubscriptionCancelled from './pages/SubscriptionCancelled';
 import Performance from './pages/Performance';
 import MarketData from './pages/MarketData';
 
+// Phase 2 Pages
+import GoldScanner from './pages/GoldScanner';
+import Community from './pages/Community';
+import TradeJournal from './pages/TradeJournal';
+import EconomicCalendar from './pages/EconomicCalendar';
+import ReferralDashboard from './pages/ReferralDashboard';
+
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
@@ -32,7 +39,16 @@ import TradeManagement from './pages/educator/TradeManagement';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requireSubscription = false, requireRole = null }) => {
-  const { isAuthenticated, user, hasActiveSubscription, hasRole } = useAuthStore();
+  const { isAuthenticated, user, hasActiveSubscription, hasRole, _hasHydrated } = useAuthStore();
+
+  // Wait for Zustand persist to hydrate before making redirect decisions
+  if (!_hasHydrated) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-cyan-400" />
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -50,13 +66,13 @@ const ProtectedRoute = ({ children, requireSubscription = false, requireRole = n
 };
 
 function App() {
-  const { fetchUser, isAuthenticated } = useAuthStore();
+  const { fetchUser, isAuthenticated, _hasHydrated } = useAuthStore();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (_hasHydrated && isAuthenticated) {
       fetchUser();
     }
-  }, [isAuthenticated]);
+  }, [_hasHydrated, isAuthenticated]);
 
   return (
     <>
@@ -119,6 +135,46 @@ function App() {
               element={
                 <ProtectedRoute requireSubscription>
                   <MarketData />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/gold-scanner"
+              element={
+                <ProtectedRoute requireSubscription>
+                  <GoldScanner />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/community"
+              element={
+                <ProtectedRoute requireSubscription>
+                  <Community />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/journal"
+              element={
+                <ProtectedRoute requireSubscription>
+                  <TradeJournal />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/calendar"
+              element={
+                <ProtectedRoute requireSubscription>
+                  <EconomicCalendar />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/referrals"
+              element={
+                <ProtectedRoute requireSubscription>
+                  <ReferralDashboard />
                 </ProtectedRoute>
               }
             />
