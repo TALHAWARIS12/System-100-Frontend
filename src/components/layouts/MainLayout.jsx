@@ -111,7 +111,7 @@ const MainLayout = () => {
           {/* Logo */}
           <div className="hidden lg:flex items-center justify-between h-16 px-4 border-b border-primary-500/20 relative">
             <div className="absolute inset-0 bg-primary-500/5"></div>
-            <h1 className="text-xl font-black text-primary-400 uppercase tracking-wider glow-text relative z-10">Trading Platform</h1>
+            <h1 className="text-xl font-black text-primary-400 uppercase tracking-wider glow-text relative z-10">Gold Circle Community</h1>
             <div className="relative z-10">
               <NotificationBell />
             </div>
