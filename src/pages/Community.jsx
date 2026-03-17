@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import api from '../utils/api';
 import useWebSocket from '../hooks/useWebSocket';
 import useAuthStore from '../store/authStore';
+import toast from 'react-hot-toast';
 
 const Community = () => {
   const { user } = useAuthStore();
@@ -155,6 +156,21 @@ const Community = () => {
     }
   };
 
+  const handleDeleteMessage = async (messageId) => {
+    if (!window.confirm('Are you sure you want to delete this message?')) return;
+    
+    try {
+      await api.delete(`/chat/messages/${messageId}`);
+      setMessages(prev => prev.map(msg => 
+        msg.id === messageId ? { ...msg, isDeleted: true, content: '[Message deleted]' } : msg
+      ));
+      toast.success('Message deleted');
+    } catch (error) {
+      console.error('Delete message error:', error);
+      toast.error('Failed to delete message');
+    }
+  };
+
   const getRoleColor = (role) => {
     switch (role) {
       case 'admin': return 'text-yellow-400';
@@ -291,19 +307,30 @@ const Community = () => {
                         {(msg.sender?.firstName || '?')[0].toUpperCase()}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={`text-sm font-bold ${getRoleColor(msg.sender?.role)}`}>
-                            {msg.sender?.firstName} {msg.sender?.lastName}
-                          </span>
-                          {msg.sender?.role !== 'client' && (
-                            <span className={`text-[9px] px-1.5 py-0.5 rounded ${getRoleBadge(msg.sender?.role)}`}>
-                              {msg.sender?.role}
+                        <div className="flex items-center gap-2 mb-1 justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-sm font-bold ${getRoleColor(msg.sender?.role)}`}>
+                              {msg.sender?.firstName} {msg.sender?.lastName}
                             </span>
+                            {msg.sender?.role !== 'client' && (
+                              <span className={`text-[9px] px-1.5 py-0.5 rounded ${getRoleBadge(msg.sender?.role)}`}>
+                                {msg.sender?.role}
+                              </span>
+                            )}
+                            <span className="text-[10px] text-gray-600">
+                              {new Date(msg.createdAt || msg.timestamp).toLocaleTimeString()}
+                            </span>
+                            {msg.isPinned && <span className="text-[10px] text-yellow-400">📌</span>}
+                          </div>
+                          {user?.role === 'admin' && (
+                            <button
+                              onClick={() => handleDeleteMessage(msg.id)}
+                              className="invisible group-hover:visible text-xs px-2 py-1 rounded bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-colors"
+                              title="Delete message"
+                            >
+                              🗑️ Delete
+                            </button>
                           )}
-                          <span className="text-[10px] text-gray-600">
-                            {new Date(msg.createdAt || msg.timestamp).toLocaleTimeString()}
-                          </span>
-                          {msg.isPinned && <span className="text-[10px] text-yellow-400">📌</span>}
                         </div>
                         <p className="text-sm text-gray-300 break-words">
                           {msg.messageType === 'image' && msg.fileUrl ? (

@@ -10,14 +10,24 @@ const GoldScanner = () => {
   const [loading, setLoading] = useState(true);
   const [scanning, setScanning] = useState(false);
   const [activeTimeframe, setActiveTimeframe] = useState('15m');
+  const [selectedPair, setSelectedPair] = useState('XAUUSD');
   const { on, off, subscribeToScanner, connected } = useWebSocket();
+  
+  const availablePairs = [
+    { symbol: 'XAUUSD', name: 'Gold (XAU/USD)', emoji: '🥇' },
+    { symbol: 'EURUSD', name: 'Euro (EUR/USD)', emoji: '💶' },
+    { symbol: 'GBPUSD', name: 'Pound (GBP/USD)', emoji: '💷' },
+    { symbol: 'GBPJPY', name: 'Pound Yen (GBP/JPY)', emoji: '¥' },
+    { symbol: 'XAGUSD', name: 'Silver (XAG/USD)', emoji: '🌑' },
+    { symbol: 'US30USD', name: 'US30 Index', emoji: '📊' }
+  ];
 
   const fetchData = useCallback(async () => {
     try {
       const [stateRes, signalsRes, pricesRes] = await Promise.all([
         api.get('/gold-scanner/state'),
-        api.get('/gold-scanner/signals?active=true&limit=10'),
-        api.get('/gold-scanner/prices')
+        api.get(`/gold-scanner/signals?active=true&limit=10&pair=${selectedPair}`),
+        api.get(`/gold-scanner/prices?pair=${selectedPair}`)
       ]);
       setScannerState(stateRes.data.state);
       setSignals(signalsRes.data.signals);
@@ -27,21 +37,22 @@ const GoldScanner = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedPair]);
 
   useEffect(() => {
     fetchData();
     subscribeToScanner();
 
     on('scanner:newSignal', (signal) => {
-      if (signal.pair === 'XAUUSD') {
+      if (signal.pair === selectedPair) {
         setSignals(prev => [signal, ...prev].slice(0, 10));
-        toast.success(`🚨 New Gold ${signal.signalType.toUpperCase()} Signal @ ${signal.entry}`);
+        const pairInfo = availablePairs.find(p => p.symbol === signal.pair);
+        toast.success(`🚨 New ${pairInfo?.name || signal.pair} ${signal.signalType.toUpperCase()} Signal @ ${signal.entry}`);
       }
     });
 
     on('market:update', (data) => {
-      if (data.pair === 'XAUUSD') {
+      if (data.pair === selectedPair) {
         setPrices(prev => ({ ...prev, ...data }));
       }
     });
@@ -53,7 +64,7 @@ const GoldScanner = () => {
       off('market:update');
       clearInterval(interval);
     };
-  }, []);
+  }, [selectedPair]);
 
   const triggerScan = async () => {
     setScanning(true);
@@ -82,21 +93,21 @@ const GoldScanner = () => {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-yellow-500/30 border-t-yellow-500 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-yellow-400 font-bold uppercase tracking-wider">Initializing Gold Scanner...</p>
+          <p className="text-yellow-400 font-bold uppercase tracking-wider">Initializing Freedom Strategy Nehemiah 6:3...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 slide-in">
+    <div className="space-y-6 slide-in bg-gradient-to-br from-amber-950/20 via-amber-900/10 to-yellow-900/20 rounded-lg p-6">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black text-white uppercase tracking-wider">
-            Gold Trade Scanner
+            Freedom Strategy Nehemiah 6:3
           </h1>
-          <p className="text-gray-400 mt-1 font-mono">XAUUSD • System-100 Strategy • Real-Time Analysis</p>
+          <p className="text-gray-400 mt-1 font-mono">XAUUSD • Freedom Strategy • Real-Time Analysis</p>
         </div>
         <div className="flex items-center gap-4">
           <div className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${connected ? 'border-green-500/30 bg-green-500/10' : 'border-red-500/30 bg-red-500/10'}`}>
@@ -115,14 +126,32 @@ const GoldScanner = () => {
         </div>
       </div>
 
+      {/* Currency Pair Selector */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
+        {availablePairs.map(pair => (
+          <button
+            key={pair.symbol}
+            onClick={() => setSelectedPair(pair.symbol)}
+            className={`p-3 rounded-lg font-bold text-sm uppercase tracking-wider transition-all ${
+              selectedPair === pair.symbol
+                ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/50 shadow-lg shadow-yellow-500/20'
+                : 'bg-dark-800/50 text-gray-400 border border-dark-700 hover:border-yellow-500/30 hover:text-yellow-300'
+            }`}
+          >
+            <div className="text-lg mb-1">{pair.emoji}</div>
+            <div className="text-[10px] leading-tight">{pair.symbol}</div>
+          </button>
+        ))}
+      </div>
+
       {/* Price Header Card */}
       <div className="gold-card p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-yellow-400 text-2xl">🥇</span>
-              <h2 className="text-2xl font-black text-white">XAU/USD</h2>
-              <span className="badge badge-yellow">Gold</span>
+              <span className="text-yellow-400 text-2xl">{availablePairs.find(p => p.symbol === selectedPair)?.emoji}</span>
+              <h2 className="text-2xl font-black text-white">{selectedPair}</h2>
+              <span className="badge badge-yellow">{availablePairs.find(p => p.symbol === selectedPair)?.name}</span>
             </div>
             <div className="flex items-baseline gap-4">
               <span className="text-5xl font-black text-white font-mono">
@@ -323,7 +352,7 @@ const GoldScanner = () => {
           <div className="text-center py-12 text-gray-500">
             <p className="text-4xl mb-4">🔍</p>
             <p className="font-bold">No active signals</p>
-            <p className="text-sm mt-1">The scanner is monitoring XAUUSD. Signals appear when conditions are met.</p>
+            <p className="text-sm mt-1">The scanner is monitoring {selectedPair}. Signals appear when conditions are met.</p>
           </div>
         ) : (
           <div className="grid gap-4">

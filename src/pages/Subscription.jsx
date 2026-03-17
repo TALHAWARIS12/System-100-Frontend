@@ -241,7 +241,7 @@ const Subscription = () => {
                     <div className="space-y-2.5">
                       {[
                         'Multi-Pair Trade Scanner',
-                        'Gold Scanner (XAUUSD)',
+                        'Freedom Strategy Nehemiah 6:3 (XAUUSD)',
                         'Economic Calendar',
                         'Community Chat',
                         'Trade Journal & Analytics',
@@ -323,7 +323,7 @@ const Subscription = () => {
               <tbody>
                 {[
                   'Multi-Pair Scanner',
-                  'Gold Scanner (XAUUSD)',
+                  'Freedom Strategy Nehemiah 6:3 (XAUUSD)',
                   'Economic Calendar',
                   'Community Chat',
                   'Trade Journal',

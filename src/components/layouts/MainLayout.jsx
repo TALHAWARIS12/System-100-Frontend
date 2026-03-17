@@ -42,7 +42,7 @@ const MainLayout = () => {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, show: true },
     { name: 'Market Data', href: '/market-data', icon: GlobeAltIcon, show: hasAccess },
-    { name: 'Gold Scanner', href: '/gold-scanner', icon: BoltIcon, show: hasAccess },
+    { name: 'Freedom Strategy Nehemiah 6:3', href: '/gold-scanner', icon: BoltIcon, show: hasAccess },
     { name: 'Scanner', href: '/scanner', icon: MagnifyingGlassIcon, show: hasAccess },
     { name: 'Trades', href: '/trades', icon: SignalIcon, show: hasAccess },
     { name: 'Journal', href: '/journal', icon: BookOpenIcon, show: hasAccess },
@@ -76,7 +76,7 @@ const MainLayout = () => {
 
       {/* Mobile menu button */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 h-16 bg-dark-800/95 backdrop-blur-sm border-b border-primary-500/20">
-        <h1 className="text-xl font-black text-primary-400 uppercase tracking-wider glow-text">Trading Platform</h1>
+        <h1 className="text-xl font-black text-primary-400 uppercase tracking-wider glow-text">Gold Circle Community</h1>
         <div className="flex items-center gap-2">
           <NotificationBell />
           <button
