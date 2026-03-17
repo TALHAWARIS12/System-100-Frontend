@@ -30,7 +30,9 @@ const GoldScanner = () => {
         api.get(`/gold-scanner/prices?pair=${selectedPair}`)
       ]);
       setScannerState(stateRes.data.state);
-      setSignals(signalsRes.data.signals);
+      // Filter duplicates by id
+      const uniqueSignals = Array.from(new Map((signalsRes.data.signals || []).map(s => [s.id, s])).values());
+      setSignals(uniqueSignals.filter(s => s.pair === selectedPair));
       setPrices(pricesRes.data.data);
     } catch (error) {
       console.error('Gold scanner fetch error:', error);
@@ -45,7 +47,12 @@ const GoldScanner = () => {
 
     on('scanner:newSignal', (signal) => {
       if (signal.pair === selectedPair) {
-        setSignals(prev => [signal, ...prev].slice(0, 10));
+        setSignals(prev => {
+          // Avoid duplicates
+          const exists = prev.some(s => s.id === signal.id);
+          if (exists) return prev;
+          return [signal, ...prev].slice(0, 10);
+        });
         const pairInfo = availablePairs.find(p => p.symbol === signal.pair);
         toast.success(`🚨 New ${pairInfo?.name || signal.pair} ${signal.signalType.toUpperCase()} Signal @ ${signal.entry}`);
       }
@@ -99,15 +106,17 @@ const GoldScanner = () => {
     );
   }
 
+  const selectedPairInfo = availablePairs.find(p => p.symbol === selectedPair);
+
   return (
-    <div className="space-y-6 slide-in bg-gradient-to-br from-amber-950/20 via-amber-900/10 to-yellow-900/20 rounded-lg p-6">
+    <div className="space-y-6 slide-in bg-gradient-to-br from-yellow-900/40 via-amber-900/30 to-yellow-800/35 rounded-xl p-8 border border-yellow-600/30 shadow-lg shadow-yellow-600/10">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black text-white uppercase tracking-wider">
             Freedom Strategy Nehemiah 6:3
           </h1>
-          <p className="text-gray-400 mt-1 font-mono">XAUUSD • Freedom Strategy • Real-Time Analysis</p>
+          <p className="text-yellow-300/80 mt-1 font-mono font-bold">{selectedPair} • Freedom Strategy • Real-Time Analysis</p>
         </div>
         <div className="flex items-center gap-4">
           <div className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${connected ? 'border-green-500/30 bg-green-500/10' : 'border-red-500/30 bg-red-500/10'}`}>
@@ -145,13 +154,13 @@ const GoldScanner = () => {
       </div>
 
       {/* Price Header Card */}
-      <div className="gold-card p-6">
+      <div className="gold-card p-6 bg-gradient-to-r from-dark-800/80 to-dark-900/80">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-yellow-400 text-2xl">{availablePairs.find(p => p.symbol === selectedPair)?.emoji}</span>
+              <span className="text-3xl">{selectedPairInfo?.emoji}</span>
               <h2 className="text-2xl font-black text-white">{selectedPair}</h2>
-              <span className="badge badge-yellow">{availablePairs.find(p => p.symbol === selectedPair)?.name}</span>
+              <span className="badge badge-yellow text-xs">{selectedPairInfo?.name}</span>
             </div>
             <div className="flex items-baseline gap-4">
               <span className="text-5xl font-black text-white font-mono">
