@@ -564,7 +564,7 @@ const TradeJournal = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs text-gray-500 uppercase mb-1">Strategy</label>
-                  <input type="text" value={form.strategy} onChange={e => setForm(f => ({...f, strategy: e.target.value}))} className="input w-full" placeholder="e.g. System-100 Gold" />
+                  <input type="text" value={form.strategy} onChange={e => setForm(f => ({...f, strategy: e.target.value}))} className="input w-full" placeholder="e.g. GOLD CIRCLE CAPITAL Gold" />
                 </div>
                 <div>
                   <label className="block text-xs text-gray-500 uppercase mb-1">Timeframe</label>

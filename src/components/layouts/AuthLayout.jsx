@@ -13,7 +13,7 @@ const AuthLayout = () => {
     <div className="min-h-screen bg-dark-900 flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-primary-500 mb-2">Trading Platform</h1>
+          <h1 className="text-3xl font-bold text-primary-500 mb-2">GOLD CIRCLE CAPITAL</h1>
           <p className="text-gray-400">Professional Trading Signals & Scanner</p>
         </div>
         <Outlet />
