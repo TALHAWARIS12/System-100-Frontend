@@ -76,7 +76,7 @@ const MainLayout = () => {
 
       {/* Mobile menu button */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 h-16 bg-dark-800/95 backdrop-blur-sm border-b border-primary-500/20">
-        <h1 className="text-xl font-black text-primary-400 uppercase tracking-wider glow-text">Gold Circle Community</h1>
+        <h1 className="text-xl font-black text-primary-400 uppercase tracking-wider glow-text">GOLD CIRCLE CAPITAL</h1>
         <div className="flex items-center gap-2">
           <NotificationBell />
           <button
@@ -111,7 +111,7 @@ const MainLayout = () => {
           {/* Logo */}
           <div className="hidden lg:flex items-center justify-between h-16 px-4 border-b border-primary-500/20 relative">
             <div className="absolute inset-0 bg-primary-500/5"></div>
-            <h1 className="text-xl font-black text-primary-400 uppercase tracking-wider glow-text relative z-10">Gold Circle Community</h1>
+            <h1 className="text-xl font-black text-primary-400 uppercase tracking-wider glow-text relative z-10">GOLD CIRCLE CAPITAL</h1>
             <div className="relative z-10">
               <NotificationBell />
             </div>
