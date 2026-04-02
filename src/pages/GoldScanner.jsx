@@ -372,48 +372,62 @@ const GoldScanner = () => {
                   : 'bg-red-500/5 border-red-500/20 hover:border-red-500/40'
               }`}>
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 flex-1">
                     <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-black ${
                       signal.signalType === 'buy' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
                     }`}>
                       {signal.signalType === 'buy' ? '▲' : '▼'}
                     </div>
                     <div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className={`text-lg font-black uppercase ${signal.signalType === 'buy' ? 'text-green-400' : 'text-red-400'}`}>
                           {signal.signalType}
                         </span>
                         <span className="badge badge-yellow text-[10px]">{signal.timeframe || activeTimeframe}</span>
+                        {signal.pattern && <span className="badge badge-info text-[10px]">{signal.pattern}</span>}
                       </div>
                       <p className="text-xs text-gray-500 font-mono mt-1">
                         {new Date(signal.createdAt || signal.timestamp).toLocaleString()}
                       </p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-4 gap-6">
-                    <div className="text-center">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 text-center flex-shrink-0">
+                    <div>
                       <p className="text-[10px] text-gray-500 uppercase tracking-wider">Entry</p>
                       <p className="text-sm font-bold text-white font-mono">{parseFloat(signal.entry).toFixed(2)}</p>
                     </div>
-                    <div className="text-center">
-                      <p className="text-[10px] text-gray-500 uppercase tracking-wider">Stop Loss</p>
+                    <div>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wider">SL</p>
                       <p className="text-sm font-bold text-red-400 font-mono">{parseFloat(signal.stopLoss).toFixed(2)}</p>
                     </div>
-                    <div className="text-center">
-                      <p className="text-[10px] text-gray-500 uppercase tracking-wider">Take Profit</p>
+                    <div>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wider">TP1</p>
                       <p className="text-sm font-bold text-green-400 font-mono">{parseFloat(signal.takeProfit).toFixed(2)}</p>
                     </div>
-                    <div className="text-center">
-                      <p className="text-[10px] text-gray-500 uppercase tracking-wider">Confidence</p>
-                      <div className="flex items-center justify-center gap-1">
-                        <p className="text-sm font-bold text-yellow-400 font-mono">{parseFloat(signal.confidence).toFixed(0)}%</p>
-                      </div>
-                      <div className="w-full bg-dark-900/50 h-1 rounded-full mt-1">
-                        <div className="h-full rounded-full bg-gradient-to-r from-yellow-500 to-yellow-300" style={{ width: `${signal.confidence}%` }} />
-                      </div>
+                    <div>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wider">Conf</p>
+                      <p className="text-sm font-bold text-yellow-400 font-mono">{parseFloat(signal.confidence).toFixed(0)}%</p>
                     </div>
                   </div>
                 </div>
+                {(signal.takeProfit2 || signal.takeProfit3) && (
+                  <div className="mt-4 pt-4 border-t border-gray-600/30">
+                    <div className="grid grid-cols-2 md:grid-cols-6 gap-3 text-center">
+                      {signal.takeProfit2 && (
+                        <div>
+                          <p className="text-[10px] text-gray-500 uppercase tracking-wider">TP2</p>
+                          <p className="text-sm font-bold text-green-300 font-mono">{parseFloat(signal.takeProfit2).toFixed(2)}</p>
+                        </div>
+                      )}
+                      {signal.takeProfit3 && (
+                        <div>
+                          <p className="text-[10px] text-gray-500 uppercase tracking-wider">TP3</p>
+                          <p className="text-sm font-bold text-green-200 font-mono">{parseFloat(signal.takeProfit3).toFixed(2)}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>

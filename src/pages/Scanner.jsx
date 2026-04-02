@@ -208,14 +208,36 @@ const Scanner = () => {
                         <p className="text-lg font-black text-red-400">{parseFloat(result.stopLoss).toFixed(2)}</p>
                       </div>
                       <div className="bg-dark-900/50 rounded-lg p-3 border border-green-500/10">
-                        <p className="text-xs text-green-400 mb-1 font-bold uppercase tracking-wider">Take Profit</p>
+                        <p className="text-xs text-green-400 mb-1 font-bold uppercase tracking-wider">TP 1</p>
                         <p className="text-lg font-black text-green-400">{parseFloat(result.takeProfit).toFixed(2)}</p>
                       </div>
                     </div>
 
+                    {(result.takeProfit2 || result.takeProfit3) && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {result.takeProfit2 && (
+                          <div className="bg-dark-900/50 rounded-lg p-3 border border-green-500/10">
+                            <p className="text-xs text-green-300 mb-1 font-bold uppercase tracking-wider">TP 2</p>
+                            <p className="text-lg font-black text-green-300">{parseFloat(result.takeProfit2).toFixed(2)}</p>
+                          </div>
+                        )}
+                        {result.takeProfit3 && (
+                          <div className="bg-dark-900/50 rounded-lg p-3 border border-green-500/10">
+                            <p className="text-xs text-green-200 mb-1 font-bold uppercase tracking-wider">TP 3</p>
+                            <p className="text-lg font-black text-green-200">{parseFloat(result.takeProfit3).toFixed(2)}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     <div className="pt-3 border-t border-primary-500/20">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-gray-400 font-semibold">Strategy: <span className="text-primary-400">{result.strategyName}</span></span>
+                      <div className="flex flex-col gap-2 text-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-400 font-semibold">Strategy: <span className="text-primary-400">{result.strategyName}</span></span>
+                          {result.pattern && (
+                            <span className="text-info-400 font-bold bg-info-900/30 px-2 py-1 rounded">Pattern: {result.pattern}</span>
+                          )}
+                        </div>
                         {result.confidence && (
                           <span className="text-yellow-400 font-bold">Confidence: {result.confidence}%</span>
                         )}
