@@ -62,9 +62,12 @@ const Subscription = () => {
     setLoading(true);
     try {
       const response = await api.post('/subscriptions/create-portal');
-      window.location.href = response.data.url;
+      if (response.data?.url) {
+        window.location.href = response.data.url;
+      }
     } catch (error) {
-      toast.error('Failed to open billing portal');
+      toast.error(error.response?.data?.message || 'Failed to open billing portal');
+    } finally {
       setLoading(false);
     }
   };
