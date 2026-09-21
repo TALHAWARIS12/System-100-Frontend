@@ -84,7 +84,8 @@ const DataSources = () => {
       toast.success('Data source deleted');
       fetchSources();
     } catch (error) {
-      toast.error('Failed to delete data source');
+      const errorMsg = error.response?.data?.message || 'Failed to delete data source';
+      toast.error(errorMsg);
     }
   };
 
@@ -176,6 +177,9 @@ const DataSources = () => {
                       {source.isActive ? 'Active' : 'Inactive'}
                     </span>
                     <span className="badge badge-info capitalize">{source.provider}</span>
+                    {source.isSystem && (
+                      <span className="badge badge-warning">System</span>
+                    )}
                     <span className="text-sm text-gray-400">Priority: {source.priority}</span>
                   </div>
 
@@ -225,12 +229,19 @@ const DataSources = () => {
                   >
                     {source.isActive ? 'Deactivate' : 'Activate'}
                   </button>
-                  <button
-                    onClick={() => handleDelete(source.id)}
-                    className="btn btn-danger text-sm"
-                  >
-                    Delete
-                  </button>
+                  {!source.isSystem && (
+                    <button
+                      onClick={() => handleDelete(source.id)}
+                      className="btn btn-danger text-sm"
+                    >
+                      Delete
+                    </button>
+                  )}
+                  {source.isSystem && (
+                    <div className="text-xs text-gray-500 text-center py-2">
+                      System data source (cannot delete)
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

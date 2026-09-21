@@ -103,6 +103,23 @@ const useAuthStore = create(
           state.user.role === 'educator' ||
           state.user.subscriptionStatus === 'active'
         );
+      },
+
+      isApprovedMember: () => {
+        const state = useAuthStore.getState();
+        if (!state.user) return false;
+        if (state.user.role === 'admin' || state.user.role === 'educator') return true;
+        const status = state.user.memberStatus || 'pending';
+        return status === 'approved' || status === 'active';
+      },
+
+      isUnlimitedTier: () => {
+        const state = useAuthStore.getState();
+        if (!state.user) return false;
+        if (state.user.role === 'admin' || state.user.role === 'educator') return true;
+        if (state.user.subscriptionStatus !== 'active') return false;
+        const tier = (state.user.subscriptionTier || '').toLowerCase();
+        return tier === 'platinum' || tier === 'unlimited' || tier === 'gold';
       }
     }),
     {

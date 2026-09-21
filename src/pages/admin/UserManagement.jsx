@@ -54,6 +54,38 @@ const UserManagement = () => {
     }
   };
 
+  const handleMemberStatusChange = async (userId, newStatus) => {
+    try {
+      await api.put(`/admin/users/${userId}/member-status`, { memberStatus: newStatus });
+      toast.success(`Member status updated to ${newStatus}`);
+      fetchUsers();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update member status');
+    }
+  };
+
+  const handleConciergeReset = async (userId, userEmail) => {
+    if (!confirm(`Trigger Concierge Password Reset for ${userEmail}? A secure recovery email will be sent.`)) return;
+
+    try {
+      const res = await api.post(`/admin/users/${userId}/reset-password`);
+      toast.success(res.data.message || 'Concierge reset triggered');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to trigger reset');
+    }
+  };
+
+  const getMemberStatusBadge = (status = 'pending') => {
+    const badges = {
+      approved: 'bg-emerald-950 text-emerald-300 border border-emerald-500/30',
+      active: 'bg-emerald-950 text-emerald-300 border border-emerald-500/30',
+      pending: 'bg-amber-950 text-amber-300 border border-amber-500/30',
+      suspended: 'bg-orange-950 text-orange-300 border border-orange-500/30',
+      revoked: 'bg-rose-950 text-rose-300 border border-rose-500/30'
+    };
+    return badges[status] || 'bg-gray-800 text-gray-300';
+  };
+
   const getRoleBadge = (role) => {
     const badges = {
       admin: 'badge bg-purple-900 text-purple-300',
@@ -85,8 +117,8 @@ const UserManagement = () => {
     <div>
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">User Management</h1>
-          <p className="text-gray-400">Manage all platform users</p>
+          <h1 className="text-3xl font-bold text-white mb-2">User Management & Access Control</h1>
+          <p className="text-gray-400">Manage member authorization lists, subscription tiers, and concierge recovery</p>
         </div>
         <button onClick={() => setShowModal(true)} className="btn btn-primary">
           <PlusIcon className="w-5 h-5 mr-2 inline" />
@@ -105,6 +137,9 @@ const UserManagement = () => {
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Role
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  List Access Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Subscription
@@ -134,19 +169,40 @@ const UserManagement = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
+                    <select
+                      value={user.memberStatus || 'pending'}
+                      onChange={(e) => handleMemberStatusChange(user.id, e.target.value)}
+                      className={`text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none ${getMemberStatusBadge(user.memberStatus)}`}
+                    >
+                      <option value="approved" className="bg-slate-900 text-emerald-400">Approved</option>
+                      <option value="active" className="bg-slate-900 text-emerald-400">Active</option>
+                      <option value="pending" className="bg-slate-900 text-amber-400">Pending Approval</option>
+                      <option value="suspended" className="bg-slate-900 text-orange-400">Suspended</option>
+                      <option value="revoked" className="bg-slate-900 text-rose-400">Revoked</option>
+                    </select>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <span className={getStatusBadge(user.subscriptionStatus)}>
-                      {user.subscriptionStatus}
+                      {user.subscriptionStatus} ({user.subscriptionTier || 'none'})
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                     {new Date(user.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                    <button
+                      onClick={() => handleConciergeReset(user.id, user.email)}
+                      className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded text-xs font-bold transition"
+                      title="Concierge Password Reset"
+                    >
+                      🔑 Reset Password
+                    </button>
                     <button
                       onClick={() => deleteUser(user.id)}
-                      className="text-red-400 hover:text-red-300 ml-4"
+                      className="text-red-400 hover:text-red-300 inline-block align-middle"
+                      title="Delete User"
                     >
-                      <TrashIcon className="w-5 h-5" />
+                      <TrashIcon className="w-5 h-5 inline" />
                     </button>
                   </td>
                 </tr>

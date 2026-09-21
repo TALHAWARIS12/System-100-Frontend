@@ -201,7 +201,7 @@ const GoldScanner = () => {
 
       {/* Timeframe Selector */}
       <div className="flex gap-2">
-        {['15m', '1h'].map(tf => (
+        {['15m', '1h', '4h'].map(tf => (
           <button
             key={tf}
             onClick={() => setActiveTimeframe(tf)}

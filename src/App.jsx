@@ -10,9 +10,12 @@ import AuthLayout from './components/layouts/AuthLayout';
 // Pages
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 import Dashboard from './pages/Dashboard';
 import Scanner from './pages/Scanner';
 import Trades from './pages/Trades';
+import MultiAssetTrades from './pages/MultiAssetTrades';
 import Calculators from './pages/Calculators';
 import Subscription from './pages/Subscription';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
@@ -82,6 +85,8 @@ function App() {
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
           </Route>
 
           {/* Protected Routes */}
@@ -110,7 +115,15 @@ function App() {
               path="/trades"
               element={
                 <ProtectedRoute requireSubscription>
-                  <Trades />
+                  <MultiAssetTrades />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/multi-asset"
+              element={
+                <ProtectedRoute requireSubscription>
+                  <MultiAssetTrades />
                 </ProtectedRoute>
               }
             />
