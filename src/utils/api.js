@@ -43,6 +43,11 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // If request marked as _silent, bypass interceptor toast notifications
+    if (originalRequest?._silent) {
+      return Promise.reject(error);
+    }
+
     // Handle 401 Unauthorized — only redirect for actual auth failures
     if (error.response?.status === 401) {
       const msg = error.response?.data?.message || '';
@@ -59,7 +64,8 @@ api.interceptors.response.use(
 
     // Handle 403 Forbidden
     if (error.response?.status === 403) {
-      toast.error('Access denied. You don\'t have permission.');
+      const message = error.response?.data?.message || 'Access denied. You don\'t have permission.';
+      toast.error(message);
       return Promise.reject(error);
     }
 
@@ -77,15 +83,14 @@ api.interceptors.response.use(
 
     // Handle 404 Not Found
     if (error.response?.status === 404) {
-      toast.error('Resource not found.');
+      const message = error.response?.data?.message || 'Resource not found.';
+      toast.error(message);
       return Promise.reject(error);
     }
 
     // Generic error handling
     const message = error.response?.data?.message || 'An error occurred';
-    if (!originalRequest._silent) {
-      toast.error(message);
-    }
+    toast.error(message);
 
     return Promise.reject(error);
   }
