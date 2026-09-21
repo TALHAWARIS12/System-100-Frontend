@@ -138,7 +138,24 @@ const MultiAssetTrades = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {trades.map((trade) => (
+          {[
+            ...trades.map(t => ({ ...t, isTrade: true })),
+            ...signals.map(s => ({
+              id: s.id,
+              asset: s.asset,
+              direction: s.direction,
+              entry: s.entry,
+              stopLoss: s.stopLoss,
+              takeProfit1: s.takeProfit || s.takeProfit1,
+              takeProfit2: s.takeProfit2,
+              takeProfit3: s.takeProfit3,
+              timeframe: s.timeframe,
+              category: s.category || 'Automated Signal',
+              status: 'active',
+              educator: { firstName: s.pattern || 'Automated Strategy' },
+              isTrade: false
+            }))
+          ].map((trade) => (
             <div
               key={trade.id}
               className="bg-slate-900 border border-slate-800 hover:border-amber-500/40 rounded-2xl p-6 shadow-xl space-y-5 transition group"
