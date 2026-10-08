@@ -109,10 +109,10 @@ const Scanner = () => {
               className="input"
             >
               <option value="">All Timeframes</option>
-              <option value="15min">15 Minutes</option>
-              <option value="1h">1 Hour</option>
-              <option value="4h">4 Hours</option>
-              <option value="1d">1 Day</option>
+              <option value="15m">15 Minutes (15m)</option>
+              <option value="1h">1 Hour (1h)</option>
+              <option value="4h">4 Hours (4h)</option>
+              <option value="1d">1 Day (Daily)</option>
             </select>
           </div>
 

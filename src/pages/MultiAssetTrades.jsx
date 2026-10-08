@@ -54,7 +54,8 @@ const MultiAssetTrades = () => {
     { id: 'all', label: 'All Timeframes' },
     { id: '15m', label: '15 Min (15m)' },
     { id: '1h', label: '1 Hour (1h)' },
-    { id: '4h', label: '4 Hours (4h)' }
+    { id: '4h', label: '4 Hours (4h)' },
+    { id: '1d', label: 'Daily (1d)' }
   ];
 
   return (
@@ -140,22 +141,54 @@ const MultiAssetTrades = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
             ...trades.map(t => ({ ...t, isTrade: true })),
-            ...signals.map(s => ({
-              id: s.id,
-              asset: s.asset,
-              direction: s.direction,
-              entry: s.entry,
-              stopLoss: s.stopLoss,
-              takeProfit1: s.takeProfit || s.takeProfit1,
-              takeProfit2: s.takeProfit2,
-              takeProfit3: s.takeProfit3,
-              timeframe: s.timeframe,
-              category: s.category || 'Automated Signal',
-              status: 'active',
-              educator: { firstName: s.pattern || 'Automated Strategy' },
-              isTrade: false
-            }))
-          ].map((trade) => (
+            ...signals.map(s => {
+              const assetUpper = (s.asset || '').toUpperCase();
+              let detectedCat = s.category;
+              if (!detectedCat || detectedCat === 'Automated Signal') {
+                if (['BTC', 'ETH', 'SOL', 'XRP', 'DOGE', 'ADA', 'BNB', 'LTC'].some(c => assetUpper.includes(c))) {
+                  detectedCat = 'Crypto';
+                } else if (['US30', 'NAS100', 'SPX', 'DJI', 'XAU', 'XAG'].some(i => assetUpper.includes(i))) {
+                  detectedCat = 'Indices';
+                } else {
+                  detectedCat = 'Forex';
+                }
+              }
+              return {
+                id: s.id,
+                asset: s.asset,
+                direction: s.direction,
+                entry: s.entry,
+                stopLoss: s.stopLoss,
+                takeProfit1: s.takeProfit || s.takeProfit1,
+                takeProfit2: s.takeProfit2,
+                takeProfit3: s.takeProfit3,
+                timeframe: s.timeframe,
+                category: detectedCat,
+                status: s.status || 'active',
+                educator: { firstName: s.pattern || 'Automated Strategy' },
+                isTrade: false,
+                rrRatio: s.rrRatio
+              };
+            })
+          ]
+            .filter(trade => {
+              if (activeCategory !== 'all') {
+                const cat = (trade.category || '').toLowerCase();
+                if (activeCategory === 'crypto' && !cat.includes('crypto')) return false;
+                if (activeCategory === 'forex' && !cat.includes('forex')) return false;
+                if (activeCategory === 'indices' && !cat.includes('indices') && !cat.includes('commodities')) return false;
+              }
+              if (activeTimeframe !== 'all') {
+                const tf = (trade.timeframe || '').toLowerCase();
+                const actTf = activeTimeframe.toLowerCase();
+                if (actTf === '1d' && !['1d', 'daily', '1day'].includes(tf)) return false;
+                if (actTf === '4h' && !['4h', '240min'].includes(tf)) return false;
+                if (actTf === '1h' && !['1h', '60min'].includes(tf)) return false;
+                if (actTf === '15m' && !['15m', '15min'].includes(tf)) return false;
+              }
+              return true;
+            })
+            .map((trade) => (
             <div
               key={trade.id}
               className="bg-slate-900 border border-slate-800 hover:border-amber-500/40 rounded-2xl p-6 shadow-xl space-y-5 transition group"

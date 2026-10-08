@@ -16,6 +16,10 @@ const TradeManagement = () => {
     entry: '',
     stopLoss: '',
     takeProfit: '',
+    takeProfit2: '',
+    takeProfit3: '',
+    timeframe: '1h',
+    category: 'forex',
     notes: '',
     isVisible: true
   });
@@ -54,6 +58,10 @@ const TradeManagement = () => {
         entry: trade.entry,
         stopLoss: trade.stopLoss,
         takeProfit: trade.takeProfit,
+        takeProfit2: trade.takeProfit2 || '',
+        takeProfit3: trade.takeProfit3 || '',
+        timeframe: trade.timeframe || '1h',
+        category: trade.category || 'forex',
         notes: trade.notes || '',
         isVisible: trade.isVisible
       });
@@ -65,6 +73,10 @@ const TradeManagement = () => {
         entry: '',
         stopLoss: '',
         takeProfit: '',
+        takeProfit2: '',
+        takeProfit3: '',
+        timeframe: '1h',
+        category: 'forex',
         notes: '',
         isVisible: true
       });
@@ -73,12 +85,26 @@ const TradeManagement = () => {
   };
 
   const populateFromSignal = (signal) => {
+    const assetUpper = (signal.pair || '').toUpperCase();
+    let detectedCat = 'forex';
+    if (['BTC', 'ETH', 'SOL', 'XRP', 'DOGE', 'ADA', 'BNB', 'LTC'].some(c => assetUpper.includes(c))) {
+      detectedCat = 'crypto';
+    } else if (['US30', 'NAS100', 'SPX', 'DJI'].some(i => assetUpper.includes(i))) {
+      detectedCat = 'indices';
+    } else if (['XAU', 'XAG'].some(m => assetUpper.includes(m))) {
+      detectedCat = 'commodities';
+    }
+
     setFormData({
       asset: signal.pair,
       direction: signal.signalType,
       entry: signal.entry,
       stopLoss: signal.stopLoss,
       takeProfit: signal.takeProfit,
+      takeProfit2: signal.takeProfit2 || '',
+      takeProfit3: signal.takeProfit3 || '',
+      timeframe: signal.timeframe || '1h',
+      category: detectedCat,
       notes: `Signal: ${signal.strategyName} - Confidence: ${signal.confidence}%`,
       isVisible: true
     });
@@ -173,6 +199,14 @@ const TradeManagement = () => {
                   }`}>
                     {trade.direction.toUpperCase()}
                   </span>
+                  <span className="ml-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-900/60 text-blue-300 border border-blue-700/50 uppercase">
+                    {trade.timeframe || '1h'}
+                  </span>
+                  {trade.category && (
+                    <span className="ml-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-900/60 text-purple-300 border border-purple-700/50 uppercase">
+                      {trade.category}
+                    </span>
+                  )}
                   {!trade.isVisible && (
                     <span className="ml-2 badge badge-yellow">Hidden</span>
                   )}
@@ -203,15 +237,21 @@ const TradeManagement = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
               <div>
                 <p className="text-xs text-gray-400 mb-1">Entry</p>
-                <p className="text-lg font-semibold text-white">{parseFloat(trade.entry).toFixed(5)}</p>
+                <p className="text-lg font-semibold text-white">
+                  {parseFloat(trade.entry) >= 100 ? parseFloat(trade.entry).toFixed(2) : parseFloat(trade.entry).toFixed(5)}
+                </p>
               </div>
               <div>
                 <p className="text-xs text-gray-400 mb-1">Stop Loss</p>
-                <p className="text-lg font-semibold text-red-400">{parseFloat(trade.stopLoss).toFixed(5)}</p>
+                <p className="text-lg font-semibold text-red-400">
+                  {parseFloat(trade.stopLoss) >= 100 ? parseFloat(trade.stopLoss).toFixed(2) : parseFloat(trade.stopLoss).toFixed(5)}
+                </p>
               </div>
               <div>
                 <p className="text-xs text-gray-400 mb-1">Take Profit</p>
-                <p className="text-lg font-semibold text-green-400">{parseFloat(trade.takeProfit).toFixed(5)}</p>
+                <p className="text-lg font-semibold text-green-400">
+                  {parseFloat(trade.takeProfit) >= 100 ? parseFloat(trade.takeProfit).toFixed(2) : parseFloat(trade.takeProfit).toFixed(5)}
+                </p>
               </div>
               {trade.pips && (
                 <div>
@@ -311,28 +351,60 @@ const TradeManagement = () => {
             )}
             
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Asset</label>
-                <input
-                  type="text"
-                  value={formData.asset}
-                  onChange={(e) => setFormData({ ...formData, asset: e.target.value })}
-                  className="input"
-                  placeholder="EURUSD"
-                  required
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Asset / Pair</label>
+                  <input
+                    type="text"
+                    value={formData.asset}
+                    onChange={(e) => setFormData({ ...formData, asset: e.target.value })}
+                    className="input"
+                    placeholder="EURUSD or BTCUSD"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="input"
+                  >
+                    <option value="forex">Forex</option>
+                    <option value="crypto">Crypto</option>
+                    <option value="indices">Indices</option>
+                    <option value="commodities">Commodities</option>
+                  </select>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Direction</label>
-                <select
-                  value={formData.direction}
-                  onChange={(e) => setFormData({ ...formData, direction: e.target.value })}
-                  className="input"
-                >
-                  <option value="buy">Buy</option>
-                  <option value="sell">Sell</option>
-                </select>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Direction</label>
+                  <select
+                    value={formData.direction}
+                    onChange={(e) => setFormData({ ...formData, direction: e.target.value })}
+                    className="input"
+                  >
+                    <option value="buy">Buy</option>
+                    <option value="sell">Sell</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Timeframe</label>
+                  <select
+                    value={formData.timeframe}
+                    onChange={(e) => setFormData({ ...formData, timeframe: e.target.value })}
+                    className="input"
+                  >
+                    <option value="15m">15m (15 Minutes)</option>
+                    <option value="1h">1h (1 Hour)</option>
+                    <option value="4h">4h (4 Hours)</option>
+                    <option value="1d">1d (Daily)</option>
+                  </select>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -340,7 +412,7 @@ const TradeManagement = () => {
                   <label className="block text-sm font-medium text-gray-300 mb-2">Entry Price</label>
                   <input
                     type="number"
-                    step="0.00001"
+                    step="any"
                     value={formData.entry}
                     onChange={(e) => setFormData({ ...formData, entry: e.target.value })}
                     className="input"
@@ -352,7 +424,7 @@ const TradeManagement = () => {
                   <label className="block text-sm font-medium text-gray-300 mb-2">Stop Loss</label>
                   <input
                     type="number"
-                    step="0.00001"
+                    step="any"
                     value={formData.stopLoss}
                     onChange={(e) => setFormData({ ...formData, stopLoss: e.target.value })}
                     className="input"
@@ -361,14 +433,38 @@ const TradeManagement = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Take Profit</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Take Profit 1</label>
                   <input
                     type="number"
-                    step="0.00001"
+                    step="any"
                     value={formData.takeProfit}
                     onChange={(e) => setFormData({ ...formData, takeProfit: e.target.value })}
                     className="input"
                     required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Take Profit 2 (Optional)</label>
+                  <input
+                    type="number"
+                    step="any"
+                    value={formData.takeProfit2}
+                    onChange={(e) => setFormData({ ...formData, takeProfit2: e.target.value })}
+                    className="input"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Take Profit 3 (Optional)</label>
+                  <input
+                    type="number"
+                    step="any"
+                    value={formData.takeProfit3}
+                    onChange={(e) => setFormData({ ...formData, takeProfit3: e.target.value })}
+                    className="input"
                   />
                 </div>
               </div>
