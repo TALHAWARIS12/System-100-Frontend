@@ -9,6 +9,8 @@ const ForgotPassword = () => {
   const [submitted, setSubmitted] = useState(false);
   const [message, setMessage] = useState('');
 
+  const [resetUrl, setResetUrl] = useState('');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email) {
@@ -21,6 +23,9 @@ const ForgotPassword = () => {
       const res = await api.post('/auth/forgot-password', { email });
       setSubmitted(true);
       setMessage(res.data.message || 'Password reset link sent if an account exists.');
+      if (res.data.resetUrl) {
+        setResetUrl(res.data.resetUrl);
+      }
       toast.success('Reset link dispatched!');
     } catch (err) {
       const errMsg = err.response?.data?.message || 'Failed to send reset link';
@@ -45,10 +50,28 @@ const ForgotPassword = () => {
       {submitted ? (
         <div className="bg-emerald-950/40 border border-emerald-500/30 rounded-xl p-6 text-center space-y-4">
           <div className="text-4xl">📧</div>
-          <h3 className="text-lg font-bold text-emerald-400">Check Your Email</h3>
+          <h3 className="text-lg font-bold text-emerald-400">Password Recovery</h3>
           <p className="text-slate-300 text-sm">{message}</p>
+          
+          {resetUrl && (
+            <div className="my-4 p-4 bg-slate-950 border border-amber-500/40 rounded-xl text-left space-y-3">
+              <div className="flex items-center space-x-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
+                <span>⚡ Instant Password Reset</span>
+              </div>
+              <p className="text-xs text-slate-400">
+                You can immediately reset your password using the secure link below:
+              </p>
+              <a
+                href={resetUrl}
+                className="inline-block w-full py-3 px-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold rounded-lg shadow-lg shadow-amber-500/20 text-center transition"
+              >
+                Reset Password Now →
+              </a>
+            </div>
+          )}
+
           <p className="text-slate-400 text-xs">
-            The reset link expires in 30 minutes. If you don't see it, check your spam or junk folder.
+            The reset link expires in 30 minutes. If you don't see the email, check your spam folder or use the instant button above.
           </p>
           <div className="pt-2">
             <Link
