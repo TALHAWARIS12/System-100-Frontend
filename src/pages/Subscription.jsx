@@ -73,6 +73,7 @@ const Subscription = () => {
   };
 
   const hasAccess = hasActiveSubscription();
+  const isExpired = Boolean(subscription?.endDate && new Date(subscription.endDate) < new Date());
   const currentTier = user?.subscriptionTier || subscription?.tier || 'none';
 
   if (plansLoading) {
@@ -120,6 +121,18 @@ const Subscription = () => {
                   </p>
                 </div>
               </>
+            ) : isExpired ? (
+              <>
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-600 to-red-700 flex items-center justify-center mr-4 shadow-lg shadow-amber-600/20">
+                  <XCircleIcon className="w-8 h-8 text-amber-200" />
+                </div>
+                <div>
+                  <p className="text-lg font-semibold text-white">Membership Expired</p>
+                  <p className="text-sm text-gray-400">
+                    Expired on {new Date(subscription.endDate).toLocaleDateString('en-GB')}. Choose a plan below to renew your access.
+                  </p>
+                </div>
+              </>
             ) : (
               <>
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-gray-500 to-gray-700 flex items-center justify-center mr-4">
@@ -132,10 +145,14 @@ const Subscription = () => {
               </>
             )}
           </div>
-          {hasAccess && (
+          {hasAccess ? (
             <button onClick={handleManageSubscription} disabled={loading} className="btn btn-ghost border border-yellow-500/20 text-yellow-400 hover:bg-yellow-500/10">
               Manage Subscription
             </button>
+          ) : (
+            <a href="#plans" className="btn btn-primary bg-yellow-500 hover:bg-yellow-400 text-dark-900 font-bold px-6 py-2.5 rounded-lg transition">
+              {isExpired ? 'Renew Membership' : 'Select Plan'}
+            </a>
           )}
         </div>
       </div>
@@ -143,7 +160,7 @@ const Subscription = () => {
       {/* Plans Grid */}
       {!hasAccess && plans.length > 0 && (
         <>
-          <div className="text-center mb-8">
+          <div id="plans" className="text-center mb-8 scroll-mt-6">
             <h2 className="text-2xl font-bold text-white mb-2">Choose Your Gold Circle Plan</h2>
             <p className="text-gray-400">All plans include full platform access &bull; USD pricing &bull; Cancel anytime</p>
           </div>

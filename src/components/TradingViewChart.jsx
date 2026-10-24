@@ -15,12 +15,29 @@ const TradingViewChart = ({ symbol = 'BTCUSD', interval = '60', height = 500 }) 
 
     // Determine exchange prefix based on symbol
     let fullSymbol = symbol;
-    if (symbol === 'XAUUSD') {
+    const cleanSym = (symbol || '').toUpperCase().replace('/', '');
+    if (cleanSym === 'XAUUSD') {
       fullSymbol = 'OANDA:XAUUSD';
-    } else if (['EURUSD', 'GBPUSD', 'USDJPY', 'AUDUSD', 'USDCAD', 'USDCHF', 'NZDUSD'].includes(symbol)) {
-      fullSymbol = `FX:${symbol}`;
+    } else if (cleanSym === 'XAGUSD') {
+      fullSymbol = 'OANDA:XAGUSD';
+    } else if (['US30', 'US30USD', 'DJI'].includes(cleanSym)) {
+      fullSymbol = 'FOREXCOM:DJI';
+    } else if (['NAS100', 'NDX', 'IXIC'].includes(cleanSym)) {
+      fullSymbol = 'FOREXCOM:NDX';
+    } else if (cleanSym.startsWith('BTC')) {
+      fullSymbol = 'BINANCE:BTCUSDT';
+    } else if (cleanSym.startsWith('ETH')) {
+      fullSymbol = 'BINANCE:ETHUSDT';
+    } else if (cleanSym.startsWith('SOL')) {
+      fullSymbol = 'BINANCE:SOLUSDT';
+    } else if (cleanSym.startsWith('XRP')) {
+      fullSymbol = 'BINANCE:XRPUSDT';
+    } else if (['DOGE', 'ADA', 'BNB', 'LTC'].some(c => cleanSym.startsWith(c))) {
+      fullSymbol = `BINANCE:${cleanSym.replace('USD', '')}USDT`;
+    } else if (['EURUSD', 'GBPUSD', 'USDJPY', 'GBPJPY', 'AUDUSD', 'USDCAD', 'USDCHF', 'NZDUSD', 'EURGBP', 'EURJPY'].includes(cleanSym)) {
+      fullSymbol = `FX:${cleanSym}`;
     } else if (!symbol.includes(':')) {
-      fullSymbol = `CRYPTO:${symbol}`;
+      fullSymbol = `BINANCE:${cleanSym.replace('USD', '')}USDT`;
     }
 
     const initWidget = () => {

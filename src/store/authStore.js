@@ -98,11 +98,12 @@ const useAuthStore = create(
       hasActiveSubscription: () => {
         const state = useAuthStore.getState();
         if (!state.user) return false;
-        return (
-          state.user.role === 'admin' ||
-          state.user.role === 'educator' ||
-          state.user.subscriptionStatus === 'active'
-        );
+        if (state.user.role === 'admin' || state.user.role === 'educator') return true;
+        if (state.user.subscriptionStatus !== 'active') return false;
+        if (state.user.subscriptionEndDate && new Date(state.user.subscriptionEndDate) < new Date()) {
+          return false;
+        }
+        return true;
       },
 
       isApprovedMember: () => {
